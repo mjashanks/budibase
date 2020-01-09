@@ -6,7 +6,7 @@ import {
 import {
     componentDependencies
 } from "../src/userInterface/pagesParsing/findDependencies";
-import { allComponents } from "./testData";
+import { screens } from "./testData";
 import { some, find } from "lodash/fp"
 
 describe("component dependencies", () => {
@@ -19,7 +19,7 @@ describe("component dependencies", () => {
 
     it("should include component that inheirts", () => {
 
-        const components = allComponents();
+        const components = screens();
         
         const result = componentDependencies(
             {}, components, get(components, "budibase-components/TextBox"));
@@ -29,7 +29,7 @@ describe("component dependencies", () => {
     });
 
     it("should include component that nests", () => {
-        const components = allComponents();
+        const components = screens();
         
         const result = componentDependencies(
             {}, components, get(components, "PrimaryButton"));
@@ -39,7 +39,7 @@ describe("component dependencies", () => {
     });
 
     it("shouldinclude component that nests inside arrays", () => {
-        const components = allComponents();
+        const components = screens();
         
         const result = componentDependencies(
             {}, components, get(components, "common/PasswordBox"));
@@ -49,7 +49,7 @@ describe("component dependencies", () => {
 
 
     it("should include components n page apbody", () => {
-        const components = allComponents();
+        const components = screens();
         const pages = {
             main: {
                 appBody: "PrimaryButton"

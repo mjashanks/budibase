@@ -5,7 +5,7 @@ import {
 } from "lodash/fp";
 import { isRootComponent } from "./searchComponents";
 
-export const libraryDependencies = (allComponents, lib) => {
+export const libraryDependencies = (components, lib) => {
 
     const componentDependsOnLibrary = comp => {
         if(isRootComponent(comp)) {
@@ -13,21 +13,21 @@ export const libraryDependencies = (allComponents, lib) => {
             return (libName === lib);
         }
         return componentDependsOnLibrary(
-            find(c => c.name === comp.inherits)(allComponents)
+            find(c => c.name === comp.inherits)(components)
         );
     }
 
     return filter(c => !isRootComponent(c) 
                         && componentDependsOnLibrary(c))(
-        allComponents
+        components
     );
 }
 
-export const componentDependencies = (pages, allComponents, dependsOn) => {
+export const componentDependencies = (pages, components, dependsOn) => {
 
     
     pages = cloneDeep(pages);
-    allComponents = cloneDeep(allComponents);
+    components = cloneDeep(components);
     const dependantComponents = [];
     const dependantPages = [];
 
@@ -53,7 +53,7 @@ export const componentDependencies = (pages, allComponents, dependsOn) => {
     }
 
 
-    for(let component of allComponents) {
+    for(let component of components) {
         
         if(isRootComponent(component)) {
             continue;

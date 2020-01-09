@@ -23,12 +23,12 @@ export let disabled = false;
 const CHOOSE_COMPONENT = "choose_component";
 const CLEAR_COMPONENT = "clear_component";
 
-let allComponents;
+let components;
 let modalElement;
 let modalAction;
 
 store.subscribe(s => {
-    allComponents = s.allComponents;
+    components = s.components;
 });
 
 $: componentSelected = props._component.length > 0;
@@ -45,7 +45,7 @@ const clearComponent = () => {
 }
 
 const componentChosen = (component) => {
-    const componentInfo = getComponentInfo(allComponents, component.name);
+    const componentInfo = getComponentInfo(components, component.name);
     props = componentInfo.fullProps;
     onValueChanged(props);
     onComponentChosen();

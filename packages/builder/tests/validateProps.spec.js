@@ -168,19 +168,19 @@ describe("recursivelyValidateProps", () => {
 
     const rootComponent = {
         width: "number",
-        child: "component",
+        child: "children",
         navitems: {
             type: "array",
             elementDefinition: {
                 name: "string",
-                icon: "component"
+                icon: "children"
             }
         }
     };
 
     const todoListComponent = {
         showTitle: "bool",
-        header: "component"
+        header: "children"
     };
 
     const headerComponent = {
@@ -201,28 +201,28 @@ describe("recursivelyValidateProps", () => {
     const rootProps = () => ({
         _component: "rootComponent",
         width: 100,
-        child: {
+        child: [{
             _component: "todoListComponent",
             showTitle: true,
-            header: {
+            header: [{
                 _component: "headerComponent",
                 text: "Your todo list"
-            }
-        },
+            }]
+        }],
         navitems: [
             {
                 name: "Main",
-                icon: {
+                icon: [{
                     _component: "iconComponent",
                     iconName:"fa fa-list"
-                }
+                }]
             },
             {
                 name: "Settings",
-                icon: {
+                icon: [{
                     _component: "iconComponent",
                     iconName:"fa fa-cog"
-                }
+                }]
             }
         ]
     });
@@ -245,7 +245,7 @@ describe("recursivelyValidateProps", () => {
 
     it("should return error on first nested child component", () => {
         const root = rootProps();
-        root.child.showTitle = "yeeeoooo";
+        root.child[0].showTitle = "yeeeoooo";
         const result = recursivelyValidate(root, getComponent);
         expect(result.length).toBe(1);
         expect(result[0].stack).toEqual(["child"]);
@@ -254,7 +254,7 @@ describe("recursivelyValidateProps", () => {
 
     it("should return error on second nested child component", () => {
         const root = rootProps();
-        root.child.header.text = false;
+        root.child[0].header[0].text = false;
         const result = recursivelyValidate(root, getComponent);
         expect(result.length).toBe(1);
         expect(result[0].stack).toEqual(["child", "header"]);
@@ -272,7 +272,7 @@ describe("recursivelyValidateProps", () => {
 
     it("should return error on invalid array child", () => {
         const root = rootProps();
-        root.navitems[1].icon.iconName = false;
+        root.navitems[1].icon[0].iconName = false;
         const result = recursivelyValidate(root, getComponent);
         expect(result.length).toBe(1);
         expect(result[0].propName).toBe("iconName");

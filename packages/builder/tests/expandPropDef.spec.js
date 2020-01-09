@@ -4,7 +4,7 @@ const propDef = {
     label: "string",
     width: {type:"number"},
     color: {type:"string", required:true},
-    child: "component",
+    child: "children",
     navitems: {
         type: "array",
         elementDefinition: {

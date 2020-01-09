@@ -5,8 +5,7 @@ import {
 } from "./pagesParsing/createProps";
 import PropControl from "./PropControl.svelte";
 import {
-    some,
-    cloneDeep,
+    some, cloneDeep
 } from "lodash/fp";
 import { validateProps } from "./pagesParsing/validateProps";
 
@@ -14,7 +13,6 @@ export let parentProps;
 export let propDef;
 export let onValueChanged;
 export let onValidate = () => {};
-export let onEditComponentProp = () => {};
 
 let value = [];
 let elementDefinitionArray;
@@ -64,10 +62,6 @@ const setProp = (index) => (name, propValue) => {
 let fieldHasError = index => propName => 
     some(e => e.propName === propName)(elementErrors[index]);
 
-const onEditComponent = (index, propName) => () => {
-    onEditComponentProp(index, propName);
-}
-
 </script>
 
 <div class="root">
@@ -83,7 +77,6 @@ const onEditComponent = (index, propName) => () => {
                         {propDef}
                         props={item}
                         {index}
-                        onEditComponent={onEditComponent(index, propDef.____name)}
                         disabled={false} />
             {/each}
         </div>

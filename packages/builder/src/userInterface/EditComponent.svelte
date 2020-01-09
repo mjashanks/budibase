@@ -12,7 +12,6 @@ import {
 } from "./pagesParsing/createProps";
 import Button from "../common/Button.svelte";
 import ButtonGroup from "../common/ButtonGroup.svelte";
-import ComponentInstanceEditor from "./ComponentInstanceEditor.svelte";
 
 import { 
     cloneDeep, 
@@ -34,13 +33,8 @@ let componentDetailsExpanded = false;
 let componentInfo;
 let modalElement
 let propsValidationErrors = [];
-let editingComponentInstance;
-let editingComponentInstancePropName="";
-let editingComponentArrayIndex;
-let editingComponentArrayPropName;
-let editingComponentInstanceTitle;
 let originalName="";
-let allComponents;
+let components;
 let ignoreStore = false;
 
 $: shortName = last(name.split("/"));
@@ -55,7 +49,7 @@ store.subscribe(s => {
     tagsString = join(", ")(component.tags);
     componentInfo = s.currentComponentInfo;
     componentDetailsExpanded = s.currentComponentIsNew;
-    allComponents = s.allComponents;
+    components = s.components;
 });
 
 const save = () => {
@@ -73,12 +67,12 @@ const save = () => {
         map(s => s.trim())
     ]);
 
-    store.saveDerivedComponent(component);
+    store.saveScreen(component);
 
     ignoreStore = false;
     // now do the rename
     if(name !== originalName) {
-        store.renameDerivedComponent(originalName, name);
+        store.renameScreen(originalName, name);
     }
 }
 
@@ -87,7 +81,7 @@ const deleteComponent = () => {
 }
 
 const confirmDeleteComponent = () => {
-    store.deleteDerivedComponent(component.name);
+    store.deleteScreen(component.name);
     hideDialog();
 }
 
@@ -99,7 +93,7 @@ const updateComponent = doChange => {
     const newComponent = cloneDeep(component);
     doChange(newComponent);
     component = newComponent;
-    componentInfo = getComponentInfo(allComponents, newComponent);
+    componentInfo = getComponentInfo(components, newComponent);
 }
 
 const onPropsChanged = newProps => {
@@ -128,37 +122,6 @@ const showDialog = () => {
     UIkit.modal(modalElement).show();
 }
 
-const onEditComponentProp = (propName, arrayIndex, arrayPropName) => {
-
-    editingComponentInstance = isUndefined(arrayIndex) 
-                               ? component.props[propName]
-                               : component.props[propName][arrayIndex][arrayPropName];
-    editingComponentInstancePropName = propName;
-    editingComponentInstanceTitle = isUndefined(arrayIndex)
-                                       ? propName
-                                       : `${propName}[${arrayIndex}].${arrayPropName}`;
-                                
-    editingComponentArrayIndex = arrayIndex;
-    editingComponentArrayPropName = arrayPropName;
-}
-
-const componentInstanceCancelEdit = () => {
-    editingComponentInstance = null;
-    editingComponentInstancePropName = "";
-}
-
-const componentInstancePropsChanged = (instanceProps) => {
-    updateComponent(newComponent => {
-        if(isUndefined(editingComponentArrayIndex)) {
-            newComponent.props[editingComponentInstancePropName] = instanceProps;
-        } else {
-            newComponent.props[editingComponentInstancePropName]
-                              [editingComponentArrayIndex]
-                              [editingComponentArrayPropName] = instanceProps;
-        }
-    });
-}
-
 </script>
 
 <div class="root">
@@ -177,14 +140,6 @@ const componentInstancePropsChanged = (instanceProps) => {
         </div>
     </div>
 
-    {#if editingComponentInstance}
-    <div class="component-props-container">
-        <ComponentInstanceEditor onGoBack={componentInstanceCancelEdit}
-                                title={editingComponentInstanceTitle}
-                                instanceProps={editingComponentInstance}
-                                onPropsChanged={componentInstancePropsChanged}/>
-    </div>
-    {:else}
     <div class="component-props-container">
 
         <div class="section-header padding" on:click={() => componentDetailsExpanded = !componentDetailsExpanded}>
@@ -218,12 +173,10 @@ const componentInstancePropsChanged = (instanceProps) => {
        
         <PropsView onValidate={onPropsValidate}
                 {componentInfo}
-                {onPropsChanged}
-                {onEditComponentProp}/>
+                {onPropsChanged} />
         
 
     </div>
-    {/if}
 
 </div>
 

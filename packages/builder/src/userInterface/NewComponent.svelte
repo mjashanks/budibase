@@ -28,11 +28,11 @@ import { assign } from "lodash";
 
 let componentSelectorModal;
 let generatorOptionsModal;
-let allComponents;
+let components;
 let generator;
 
 store.subscribe(s => {
-    allComponents = s.allComponents;
+    components = s.components;
 })
 
 export const close = () => {
@@ -46,7 +46,7 @@ export const show = () => {
 }
 
 const onComponentChosen = (c) => {
-    store.createDerivedComponent(c.name);
+    store.createScreen(c.name);
     close();
 }
 

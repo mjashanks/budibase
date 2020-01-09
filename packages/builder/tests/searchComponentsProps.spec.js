@@ -3,14 +3,14 @@ import {
     getExactComponent,
     getAncestorProps
 } from "../src/userInterface/pagesParsing/searchComponents";
-import { allComponents } from "./testData";
+import { screens } from "./testData";
 
 describe("searchAllComponents", () => {
 
     it("should match derived component by name", () => {
 
         const results = searchAllComponents(
-            allComponents(),
+            screens(),
             "password"
         );
 
@@ -22,7 +22,7 @@ describe("searchAllComponents", () => {
     it("should match derived component by tag", () => {
 
         const results = searchAllComponents(
-            allComponents(),
+            screens(),
             "mask"
         );
 
@@ -34,7 +34,7 @@ describe("searchAllComponents", () => {
     it("should match component if ancestor matches", () => {
 
         const results = searchAllComponents(
-            allComponents(),
+            screens(),
             "smalltext"
         );
 
@@ -47,7 +47,7 @@ describe("searchAllComponents", () => {
 describe("getExactComponent", () => {
     it("should get component by name", () => {
         const result = getExactComponent(
-            allComponents(),
+            screens(),
             "common/SmallTextbox"
         )
 
@@ -57,7 +57,7 @@ describe("getExactComponent", () => {
 
     it("should return nothing when no result (should not fail)", () => {
         const result = getExactComponent(
-            allComponents(),
+            screens(),
             "bla/bla/bla"
         )
 
@@ -71,19 +71,19 @@ describe("getAncestorProps", () => {
     it("should return props of root component", () => {
 
         const result = getAncestorProps(
-            allComponents(),
+            screens(),
             "budibase-components/TextBox"   
         );
 
         expect(result).toEqual([
-            allComponents()[0].props
+            screens()[0].props
         ]);
 
     });
 
     it("should return props of all ancestors and current component, in order", () => {
 
-        const components = allComponents();
+        const components = screens();
 
         const result = getAncestorProps(
             components,

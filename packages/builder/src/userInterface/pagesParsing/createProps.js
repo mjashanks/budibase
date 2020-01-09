@@ -1,25 +1,16 @@
 import {
-    isString, 
-    isUndefined,
-    find,
-    keys,
-    uniq,
-    some,
-    filter,
-    reduce,
-    cloneDeep,
-    includes,
-    last
+    isString, isUndefined, find, keys, uniq,
+    some, filter, reduce, cloneDeep, includes,last
 } from "lodash/fp";
 import { types, expandPropsDefinition } from "./types";
 import { assign } from "lodash";
 import { pipe } from "../../common/core";
 import { isRootComponent } from "./searchComponents";
 
-export const createPropDefinitionForDerived = (allComponents, componentName) => {
+export const createPropDefinitionForDerived = (components, componentName) => {
     
 
-    const {propDef, derivedProps} = getComponentInfo(allComponents, componentName);
+    const {propDef, derivedProps} = getComponentInfo(components, componentName);
 
     const hasDerivedProp = k => pipe(derivedProps, [
         keys,
@@ -50,8 +41,8 @@ export const getInstanceProps = (componentInfo, props) => {
     return finalProps;
 }
 
-export const getNewComponentInfo = (allComponents, inherits) => {
-    const parentcomponent = find(c => c.name === inherits)(allComponents);
+export const getNewComponentInfo = (components, inherits) => {
+    const parentcomponent = find(c => c.name === inherits)(components);
     const component = {
         name:"", 
         description:"", 
@@ -60,37 +51,26 @@ export const getNewComponentInfo = (allComponents, inherits) => {
         tags:parentcomponent.tags
     };
     return getComponentInfo(
-        allComponents,
+        components,
         inherits,
         [component],
         {});
 }
 
 
-export const getComponentInfo = (allComponents, comp, stack=[], subComponentProps=null) => {
+export const getComponentInfo = (components, comp, stack=[], subComponentProps=null) => {
     const component = isString(comp) 
-                      ? find(c => c.name === comp)(allComponents)
+                      ? find(c => c.name === comp)(components)
                       : comp;
     const cname = isString(comp) ? comp : comp.name;
     if(isRootComponent(component)) {
         subComponentProps = subComponentProps||{};
         const p = createProps(cname, component.props, subComponentProps);
         const rootProps = createProps(cname, component.props);
-        const inheritedProps = [];
         const targetComponent = stack.length > 0
                                 ? last(stack)
                                 : component;
-        if(stack.length > 0) {
-            
-            for(let prop in subComponentProps) {
-                const hasProp = pipe(targetComponent.props, [
-                                        keys,
-                                        includes(prop)]);
 
-                if(!hasProp)
-                    inheritedProps.push(prop);
-            }
-        }
         const unsetProps = pipe(p.props, [
             keys,
             filter(k => !includes(k)(keys(subComponentProps)) && k !== "_component")
@@ -101,7 +81,6 @@ export const getComponentInfo = (allComponents, comp, stack=[], subComponentProp
 
         return ({
             propsDefinition:expandPropsDefinition(component.props), 
-            inheritedProps,
             rootDefaultProps: rootProps.props,
             unsetProps,
             fullProps: fullProps,
@@ -111,7 +90,7 @@ export const getComponentInfo = (allComponents, comp, stack=[], subComponentProp
         });
     }
     return getComponentInfo(
-        allComponents, 
+        components, 
         component.inherits, 
         [component, ...stack],
         {...component.props, ...subComponentProps});

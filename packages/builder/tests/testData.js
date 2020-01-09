@@ -1,5 +1,5 @@
 
-export const allComponents = () => ([
+export const screens = () => ([
     {
         name: "budibase-components/TextBox",
         tags: ["Text", "input"],
@@ -16,7 +16,7 @@ export const allComponents = () => ([
         props: {
             size: {type:"options", options:["small", "medium", "large"]},
             css: "string",
-            content: "component",
+            content: "children",
             contentText: "string"
         } 
     },
@@ -25,11 +25,11 @@ export const allComponents = () => ([
         tags: ["input"],
         props: {
             width: "number",
-            header : "component",
+            header : "children",
             children: {
                 type:"array",
                 elementDefinition: {
-                    control: "component"
+                    control: "children"
                 }
             } 
         }
@@ -70,26 +70,26 @@ export const allComponents = () => ([
         props: {
 
             width: 100,
-            header: {
+            header: [{
                 _component: "PrimaryButton"
-            },
+            }],
             children: [
                 {
-                    control: {
+                    control: [{
                         _component: "PrimaryButton",
                         contentText: "Button 1"
-                    }
+                    }]
                 },
                 {
-                    control: {
+                    control: [{
                         _component: "PrimaryButton",
                         contentText: "Button 2"
-                    }
+                    }]
                 },
                 {
-                    control: {
+                    control: [{
                         _component: "common/PasswordBox",
-                    }
+                    }]
                 }
             ]
         }

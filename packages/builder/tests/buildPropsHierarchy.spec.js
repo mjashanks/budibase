@@ -1,4 +1,4 @@
-import { allComponents } from "./testData";
+import { screens } from "./testData";
 import {
     find
 } from "lodash/fp";
@@ -9,7 +9,7 @@ describe("buildPropsHierarchy", () => {
 
     it("should build a complex component with arrays and components", () => {
 
-        const components = allComponents();
+        const components = screens();
 
         const allprops = buildPropsHierarchy(
             components, "ButtonGroup");
@@ -19,19 +19,19 @@ describe("buildPropsHierarchy", () => {
         const primaryButtonProps = () => ({
             _component: "budibase-components/Button",
             css:"btn-primary",
-            content: {_component:""},
+            content: [],
             contentText: "",
             size:""
         });
 
         const headerButton = primaryButtonProps();
-        expect(allprops.header).toEqual(headerButton);
+        expect(allprops.header).toEqual([headerButton]);
 
         const button1 = primaryButtonProps();
         button1.contentText = "Button 1";
         expect(allprops.children[0]).toEqual({
             _component: "children#array_element#",
-            control: button1
+            control: [button1]
         });
 
 
@@ -39,7 +39,7 @@ describe("buildPropsHierarchy", () => {
         button2.contentText = "Button 2";
         expect(allprops.children[1]).toEqual({
             _component: "children#array_element#",
-            control: button2
+            control: [button2]
         })
 
 

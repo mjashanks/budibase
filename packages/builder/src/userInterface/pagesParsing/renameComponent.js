@@ -5,15 +5,15 @@ import {
     isRootComponent, getExactComponent
 } from "./searchComponents";
 
-export const rename = (pages, allComponents, oldname, newname) => {
+export const rename = (pages, components, oldname, newname) => {
 
     pages = cloneDeep(pages);
-    allComponents = cloneDeep(allComponents);
+    components = cloneDeep(components);
     const changedComponents = [];
 
-    const existingWithNewName = getExactComponent(allComponents, newname);
+    const existingWithNewName = getExactComponent(components, newname);
     if(existingWithNewName) return {
-        allComponents, pages, error: "Component by that name already exists"
+        components, pages, error: "Component by that name already exists"
     };
 
     const traverseProps = (props) => {
@@ -38,7 +38,7 @@ export const rename = (pages, allComponents, oldname, newname) => {
     }
 
 
-    for(let component of allComponents) {
+    for(let component of components) {
         
         if(isRootComponent(component)) {
             continue;
@@ -69,7 +69,7 @@ export const rename = (pages, allComponents, oldname, newname) => {
         }
     }
 
-    return {allComponents, pages, changedComponents};
+    return {components, pages, changedComponents};
 
 
 }

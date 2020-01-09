@@ -18,7 +18,7 @@ export const isComponent = c => {
     return hasProp("name") && hasProp("props");
 }
 
-export const searchAllComponents = (allComponents, phrase) => {
+export const searchAllComponents = (components, phrase) => {
 
     const hasPhrase = (...vals) => 
         pipe(vals, [
@@ -31,34 +31,34 @@ export const searchAllComponents = (allComponents, phrase) => {
         if(isRootComponent(c)) return false;
         
         const parent = getExactComponent(
-            allComponents,
+            components,
             c.inherits);
 
         return componentMatches(parent);
     }
 
-    return filter(componentMatches)(allComponents);
+    return filter(componentMatches)(components);
 } 
 
-export const getExactComponent = (allComponents, name) => {
+export const getExactComponent = (components, name) => {
     
     const stringEquals = (s1, s2) => 
         normalString(s1) === normalString(s2);
     
-    return pipe(allComponents,[
+    return pipe(components,[
         find(c => stringEquals(c.name, name))
     ]);
 }
 
-export const getAncestorProps = (allComponents, name, found=[]) => {
+export const getAncestorProps = (components, name, found=[]) => {
     const thisComponent = getExactComponent(
-        allComponents, name);
+        components, name);
 
     if(isRootComponent(thisComponent)) 
         return [thisComponent.props, ...found];
 
     return getAncestorProps(
-        allComponents, 
+        components, 
         thisComponent.inherits,
         [{...thisComponent.props}, 
         ...found]);

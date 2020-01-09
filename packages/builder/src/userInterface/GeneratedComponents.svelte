@@ -33,7 +33,7 @@ store.subscribe(s => {
             indexSchema: getIndexSchema(s.hierarchy)
         }
     }
-    existingComponents = s.allComponents;
+    existingComponents = s.components;
 });
 
 const componentExists = name => 
@@ -86,7 +86,7 @@ const onNameChanged = component => ev => {
     const oldname = component.component.name;
     const result = rename({}, allGeneratedComponents, oldname, newname);
     component.error = result.error || "";
-    allGeneratedComponents = [...result.allComponents];
+    allGeneratedComponents = [...result.components];
     selectedComponents = map(s => {
         if(s.name === oldname) s.name = newname;
         return s;

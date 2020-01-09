@@ -2,7 +2,7 @@ import {
     getComponentInfo, createProps, getInstanceProps 
 } from "./createProps";
 
-export const buildPropsHierarchy = (allComponents, baseComponent) => {
+export const buildPropsHierarchy = (components, baseComponent) => {
 
     const buildProps = (componentName, propsDefinition, derivedFromProps) => {
 
@@ -13,24 +13,32 @@ export const buildPropsHierarchy = (allComponents, baseComponent) => {
 
             const propDef = propsDefinition[propName];
             if(!propDef) continue;
-            if(propDef.type === "component") {
+            if(propDef.type === "children") {
 
-                const subComponentProps = props[propName];
+                const childrenProps = props[propName];
                 
-                if(!subComponentProps._component) continue;
+                if(!childrenProps 
+                   || childrenProps.length === 0) {
+                       continue;
+                }
 
-                const propComponentInfo = getComponentInfo(
-                    allComponents, subComponentProps._component);
+                props[propName] = [];
 
-                const subComponentInstanceProps = getInstanceProps(
-                    propComponentInfo,
-                    subComponentProps
-                );
-
-                props[propName] = buildProps(
-                    propComponentInfo.rootComponent.name,
-                    propComponentInfo.propsDefinition,
-                    subComponentInstanceProps);
+                for(let child of childrenProps) {
+                    const propComponentInfo = getComponentInfo(
+                        components, child._component);
+    
+                    const subComponentInstanceProps = getInstanceProps(
+                        propComponentInfo,
+                        child
+                    );
+    
+                    props[propName].push(
+                        buildProps(
+                            propComponentInfo.rootComponent.name,
+                            propComponentInfo.propsDefinition,
+                            subComponentInstanceProps));
+                }
 
             } else if(propDef.type === "array") {
                 const propsArray = props[propName];
@@ -55,7 +63,7 @@ export const buildPropsHierarchy = (allComponents, baseComponent) => {
 
     if(!baseComponent) return {};
 
-    const baseComponentInfo  = getComponentInfo(allComponents, baseComponent);
+    const baseComponentInfo  = getComponentInfo(components, baseComponent);
 
     return buildProps(
         baseComponentInfo.rootComponent.name,

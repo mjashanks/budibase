@@ -32,7 +32,7 @@ const settings = () => {
         <div class="components-list-container">
             <div class="nav-group-header">
                 <div>{@html getIcon("sidebar","18")}</div>
-                <span class="components-nav-header">Components</span>
+                <span class="components-nav-header">Screens</span>
                 <div>
                     <IconButton icon="settings" 
                                 size="14px"
@@ -42,7 +42,7 @@ const settings = () => {
                 </div>
             </div>
             <div class="nav-items-container">
-                <ComponentsHierarchy components={$store.derivedComponents}/>
+                <ComponentsHierarchy components={$store.screens}/>
             </div>
         </div>
 
@@ -59,14 +59,14 @@ const settings = () => {
     </div>
 
     <div>
-        {#if $store.currentFrontEndType === "component"}
+        {#if $store.currentFrontEndType === "screen"}
         <CurrentItemPreview />
         {:else if $store.currentFrontEndType === "page"}
         <PageView />
         {/if} 
     </div>
 
-    {#if $store.currentFrontEndType === "component"}
+    {#if $store.currentFrontEndType === "screen"}
     <div class="properties-pane">
         <EditComponent />
     </div>

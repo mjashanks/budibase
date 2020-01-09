@@ -59,12 +59,14 @@ export const recursivelyValidate = (rootProps, getComponent, stack=[]) => {
         true);
 
     const validateChildren = (_defArray, _props, _stack) => pipe(_defArray, [
-        filter(d => d.type === "component"),
-        map(d => recursivelyValidate(
-                    _props[d.name], 
-                    getComponentPropsDefinition, 
-                    [..._stack, d.name])),
-        flatten
+        filter(d => d.type === "children"),
+        map(d => pipe(_props[d.name], [
+                    map(child => recursivelyValidate(
+                                    child, 
+                                    getComponentPropsDefinition, 
+                                    [..._stack, d.name]))
+                ])),
+        flattenDeep
     ]);
 
     const childErrors = validateChildren(
@@ -130,7 +132,7 @@ export const validateProps = (propsDefinition, props, stack=[], isFinal=true, is
 
         if(isBinding(propValue)) {
             if(propDef.type === "array" 
-                || propDef.type === "component"
+                || propDef.type === "children"
                 || propDef.type === "event") {
                 error(`Cannot apply binding to type ${propDef.type}`);
                 continue;

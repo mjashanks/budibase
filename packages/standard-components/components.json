@@ -33,7 +33,7 @@
 		"description": "an html <button />",
 		"props": {
 			"contentText": { "type": "string", "default": "Button" },
-			"contentComponent": "component",
+			"contentComponent": "children",
 			"className": {"type": "string", "default": "default"},
 			"disabled": "bool",
 			"onClick": "event",
@@ -72,7 +72,7 @@
 				"type":"array",
 				"elementDefinition": {
 					"label": "string",
-					"control":"component"
+					"control":"children"
 				}
 			}
 		},
@@ -139,7 +139,7 @@
 			"children": {
 				"type":"array",
 				"elementDefinition": {
-					"control":"component"
+					"control":"children"
 				}
 			},
 			"width": {"type":"string","default":"auto"},
@@ -147,7 +147,7 @@
 			"containerClass":"string",
 			"itemContainerClass":"string",
 			"data": "state",
-			"dataItemComponent": "component",
+			"dataItemComponent": "children",
 			"onLoad": "event"
 		},
 		"tags": ["div", "container", "layout", "panel"]
@@ -162,7 +162,7 @@
 			"children": {
 				"type":"array",
 				"elementDefinition": {
-					"component":"component",
+					"children":"children",
 					"gridColumnStart":"string",
 					"gridColumnEnd":"string",
 					"gridRowStart":"string",
@@ -220,7 +220,7 @@
 		"description": "A stylable div with a component inside",
 		"props" : {
 			"text": "string",
-			"component": "component",
+			"children": "children",
 			"containerClass": "string",
 			"background": "string",
 			"border": "string",
@@ -261,7 +261,7 @@
 				"type": "array",
 				"elementDefinition" : {
 					"title": "string",
-					"component": "component"
+					"children": "children"
 				}
 			},
 			"selectedItem":"string",
@@ -300,13 +300,13 @@
 			"children": {
 				"type":"array",
 				"elementDefinition": {
-					"component":"component",
+					"children":"children",
 					"className": "string"
 				}
 			},
 			"className":"string",
 			"data": "state",
-			"dataItemComponent": "component",
+			"dataItemComponent": "children",
 			"onLoad": "event"
 		},
 		"tags": ["div", "container", "layout"]
@@ -377,8 +377,8 @@
 		"description": "An if condition.. if (CONDITION) THEN [display component A] ELSE [display component B]",
 		"props" : {
 			"condition": "string",
-			"thenComponent":{"type":"component", "required":true},
-			"elseComponent":"component"
+			"thenComponent":{"type":"children", "required":true},
+			"elseComponent":"children"
 		},
 		"tags": []
 	}

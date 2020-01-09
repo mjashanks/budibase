@@ -130,14 +130,14 @@ describe("createDefaultProps", () => {
 
     it("should create a object with single empty component props, when prop definition is 'component' ", () => {
         const propDef = {
-            content: "component"
+            content: "children"
         };
 
         const { props, errors } = createProps("some_component",propDef);
 
         expect(errors).toEqual([]);
         expect(props.content).toBeDefined();
-        expect(props.content).toEqual({_component:""});
+        expect(props.content).toEqual([]);
     });
 
     it("should create an object with multiple prop names", () => {

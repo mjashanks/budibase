@@ -36,7 +36,7 @@ export const getStore = () => {
         pages:defaultPagesObject(),
         mainUi:{},
         unauthenticatedUi:{},
-        allComponents:[],
+        components:[],
         currentFrontEndItem:null,
         currentComponentInfo:null,
         currentComponentIsNew:false,
@@ -74,14 +74,14 @@ export const getStore = () => {
     store.saveLevel = saveLevel(store);
     store.deleteLevel = deleteLevel(store);
     store.setActiveNav = setActiveNav(store);
-    store.saveDerivedComponent = saveDerivedComponent(store);
+    store.saveScreen = saveScreen(store);
     store.refreshComponents = refreshComponents(store);
     store.addComponentLibrary = addComponentLibrary(store);
-    store.renameDerivedComponent = renameDerivedComponent(store);
-    store.deleteDerivedComponent = deleteDerivedComponent(store);
-    store.setCurrentComponent = setCurrentComponent(store);
+    store.renameScreen = renameScreen(store);
+    store.deleteScreen = deleteScreen(store);
+    store.setCurrentScreen = setCurrentScreen(store);
     store.setCurrentPage = setCurrentPage(store);
-    store.createDerivedComponent = createDerivedComponent(store);
+    store.createScreen = createScreen(store);
     store.removeComponentLibrary =removeComponentLibrary(store);
     store.addStylesheet = addStylesheet(store);
     store.removeStylesheet = removeStylesheet(store);
@@ -120,10 +120,9 @@ const initialise = (store, initial) => async () => {
     initial.hasAppPackage = true;
     initial.hierarchy = pkg.appDefinition.hierarchy;
     initial.accessLevels = pkg.accessLevels;
-    initial.derivedComponents = values(pkg.derivedComponents);
-    initial.generators = generatorsArray(pkg.rootComponents.generators);
-    initial.allComponents = combineComponents(
-        pkg.derivedComponents, pkg.rootComponents.components);
+    initial.screens = values(pkg.screens);
+    initial.generators = generatorsArray(pkg.components.generators);
+    initial.components = pkg.components.components;
     initial.actions = values(pkg.appDefinition.actions);
     initial.triggers = pkg.appDefinition.triggers;
 
@@ -173,17 +172,6 @@ const showFrontend = store => () => {
         s.isBackend = false;
         return s;
     })
-}
-
-const combineComponents = (root, derived) => {
-    const all = []
-    for(let r in root) {
-        all.push(root[r]);
-    }
-    for(let d in derived) {
-        all.push(derived[d]);
-    }
-    return all;
 }
 
 const newRecord = (store, useRoot) => () => {
@@ -440,42 +428,42 @@ const setActiveNav = store => navName => {
 const createShadowHierarchy = hierarchy => 
     constructHierarchy(JSON.parse(JSON.stringify(hierarchy)));
 
-const saveDerivedComponent = store => (derivedComponent) => {
+const saveScreen = store => (screen) => {
 
     store.update(s => {
 
-        const components = pipe(s.allComponents, [
-            filter(c => c.name !== derivedComponent.name),
-            concat([derivedComponent])
+        const components = pipe(s.components, [
+            filter(c => c.name !== screen.name),
+            concat([screen])
         ]);
 
-        const derivedComponents = pipe(s.derivedComponents, [
-            filter(c => c.name !== derivedComponent.name),
-            concat([derivedComponent])
+        const screens = pipe(s.screens, [
+            filter(c => c.name !== screen.name),
+            concat([screen])
         ]);
 
-        s.allComponents = components;
-        s.derivedComponents = derivedComponents;
-        s.currentFrontEndItem = derivedComponent;
+        s.components = components;
+        s.screens = screens;
+        s.currentFrontEndItem = screen;
         s.currentComponentInfo = getComponentInfo(
-            s.allComponents, derivedComponent.name);
+            s.components, screen.name);
         s.currentComponentIsNew = false;
         
-        api.post(`/_builder/api/${s.appname}/derivedcomponent`, derivedComponent)
+        api.post(`/_builder/api/${s.appname}/screen`, screen)
             .then(() => savePackage(store, s));
 
         return s;
     })
 };
 
-const createDerivedComponent = store => componentName => {
+const createScreen = store => componentName => {
     store.update(s => {
         const newComponentInfo = getNewComponentInfo(
-            s.allComponents, componentName);
+            s.components, componentName);
 
         s.currentFrontEndItem = newComponentInfo.component;
         s.currentComponentInfo = newComponentInfo;
-        s.currentFrontEndType = "component";
+        s.currentFrontEndType = "screen";
         s.currentComponentIsNew = true;
         return s;
     });
@@ -483,12 +471,12 @@ const createDerivedComponent = store => componentName => {
 
 const createGeneratedComponents = store => components => {
     store.update(s => {
-        s.allComponents = [...s.allComponents, ...components];
-        s.derivedComponents = [...s.derivedComponents, ...components];
+        s.components = [...s.components, ...components];
+        s.screens = [...s.screens, ...components];
 
         const doCreate = async () => {
             for(let c of components) {
-                await api.post(`/_builder/api/${s.appname}/derivedcomponent`, c);
+                await api.post(`/_builder/api/${s.appname}/screen`, c);
             }
 
             await savePackage(store, s);
@@ -500,55 +488,55 @@ const createGeneratedComponents = store => components => {
     });
 };
 
-const deleteDerivedComponent = store => name => {
+const deleteScreen = store => name => {
     store.update(s => {
 
-        const allComponents = pipe(s.allComponents, [
+        const components = pipe(s.components, [
             filter(c => c.name !== name)
         ]);
 
-        const derivedComponents = pipe(s.derivedComponents, [
+        const screens = pipe(s.screens, [
             filter(c => c.name !== name)
         ]);
 
-        s.allComponents = allComponents;
-        s.derivedComponents = derivedComponents;
+        s.components = components;
+        s.screens = screens;
         if(s.currentFrontEndItem.name === name) {
             s.currentFrontEndItem = null;
             s.currentFrontEndType = "";
         }
 
-        api.delete(`/_builder/api/${s.appname}/derivedcomponent/${name}`);
+        api.delete(`/_builder/api/${s.appname}/screen/${name}`);
 
         return s;
     })
 }
 
-const renameDerivedComponent = store => (oldname, newname) => {
+const renameScreen = store => (oldname, newname) => {
     store.update(s => {
 
         const {
-            allComponents, pages, error, changedComponents
-        } = rename(s.pages, s.allComponents, oldname, newname);
+            components, pages, error, changedComponents
+        } = rename(s.pages, s.components, oldname, newname);
 
         if(error) {
             // should really do something with this
             return s;
         }
 
-        s.allComponents = allComponents;
+        s.components = components;
         s.pages = pages;
         if(s.currentFrontEndItem.name === oldname)
             s.currentFrontEndItem.name = newname;
 
         const saveAllChanged = async () => {
             for(let cname of changedComponents) {
-                const changedComponent = getExactComponent(allComponents, cname);
-                await api.post(`/_builder/api/${s.appname}/derivedcomponent`, changedComponent);
+                const changedComponent = getExactComponent(components, cname);
+                await api.post(`/_builder/api/${s.appname}/screen`, changedComponent);
             }
         }
 
-        api.patch(`/_builder/api/${s.appname}/derivedcomponent`, {
+        api.patch(`/_builder/api/${s.appname}/screen`, {
             oldname, newname
         })
         .then(() => saveAllChanged())
@@ -597,7 +585,7 @@ const addComponentLibrary = store => async lib => {
                 componentsArray.push(components[c]);
             }
 
-            s.allComponents = pipe(s.allComponents, [
+            s.components = pipe(s.components, [
                 filter(c => !c.name.startsWith(`${lib}/`)),
                 concat(componentsArray)
             ]);
@@ -643,20 +631,20 @@ const removeStylesheet = store => stylesheet => {
 
 const refreshComponents = store => async () => {
 
-    const components = 
-        await api.get(`/_builder/api/${db.appname}/rootcomponents`).then(r => r.json());
+    const componentsAndGenerators = 
+        await api.get(`/_builder/api/${db.appname}/components`).then(r => r.json());
 
-    const rootComponents = pipe(components.components, [
+    const components = pipe(componentsAndGenerators.components, [
         keys,
-        map(k => ({...components[k], name:k}))
+        map(k => ({...componentsAndGenerators[k], name:k}))
     ]);
 
     store.update(s => {
-        s.allComponents = pipe(s.allComponents, [
+        s.components = pipe(s.components, [
             filter(c => !isRootComponent(c)),
-            concat(rootComponents)
+            concat(components)
         ]);
-        s.generators = components.generators;
+        s.generators = componentsAndGenerators.generators;
         return s;
     });
 };
@@ -668,8 +656,8 @@ const savePackage = (store, s) => {
         triggers:s.triggers,
         actions: keyBy("name")(s.actions),
         props: {
-            main: buildPropsHierarchy(s.allComponents, s.pages.main.appBody),
-            unauthenticated:  buildPropsHierarchy(s.allComponents, s.pages.unauthenticated.appBody)
+            main: buildPropsHierarchy(s.components, s.pages.main.appBody),
+            unauthenticated:  buildPropsHierarchy(s.components, s.pages.unauthenticated.appBody)
         }
     };
 
@@ -682,13 +670,13 @@ const savePackage = (store, s) => {
     return api.post(`/_builder/api/${s.appname}/appPackage`, data);
 }
 
-const setCurrentComponent = store => componentName => {
+const setCurrentScreen = store => componentName => {
     store.update(s => {
-        const component = getExactComponent(s.allComponents, componentName);
+        const component = getExactComponent(s.components, componentName);
         s.currentFrontEndItem = component;
-        s.currentFrontEndType = "component";
+        s.currentFrontEndType = "screen";
         s.currentComponentIsNew = false;
-        s.currentComponentInfo = getComponentInfo(s.allComponents, component.name);
+        s.currentComponentInfo = getComponentInfo(s.components, component.name);
         return s;
     })
 }
