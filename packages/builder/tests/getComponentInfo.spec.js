@@ -1,11 +1,12 @@
 import { 
     getInstanceProps,
-    getComponentInfo 
+    getScreenInfo ,
+    getComponentInfo
 } from "../src/userInterface/pagesParsing/createProps";
 import {
-    keys, some
+    keys, some, find
 } from "lodash/fp";
-import { screens } from "./testData";
+import { componentsAndScreens } from "./testData";
 
 
 
@@ -13,7 +14,7 @@ describe("getComponentInfo", () => {
 
     it("should return default props for root component", () => {
         const result = getComponentInfo(
-            screens(), 
+            componentsAndScreens().components, 
             "budibase-components/TextBox");
 
         expect(result.errors).toEqual([]);
@@ -29,7 +30,7 @@ describe("getComponentInfo", () => {
     it("getInstanceProps should set supplied props on top of default props", () => {
         const result = getInstanceProps(
             getComponentInfo(
-                screens(), 
+                componentsAndScreens().components, 
                 "budibase-components/TextBox"),
             {size:"small"});
 
@@ -42,11 +43,18 @@ describe("getComponentInfo", () => {
         });
         
     });
+});
 
-    it("should return correct props for derived component", () => {
-        const result = getComponentInfo(
-            screens(), 
-            "common/SmallTextbox");
+describe("getScreenInfo", () => {
+
+    const getScreen = (screens, name) => 
+        find(s => s.name === name)(screens);
+
+    it("should return correct props for screen", () => {
+        const {components, screens} = componentsAndScreens();
+        const result = getScreenInfo(
+            components, 
+            getScreen(screens, "common/SmallTextbox"));
 
         expect(result.errors).toEqual([]);
         expect(result.fullProps).toEqual({
@@ -59,9 +67,10 @@ describe("getComponentInfo", () => {
     });
 
     it("should return correct props for twice derived component", () => {
-        const result = getComponentInfo(
-            screens(), 
-            "common/PasswordBox");
+        const {components, screens} = componentsAndScreens();
+        const result = getScreenInfo(
+            components, 
+            getScreen(screens, "common/PasswordBox"));
 
         expect(result.errors).toEqual([]);
         expect(result.fullProps).toEqual({
@@ -75,9 +84,10 @@ describe("getComponentInfo", () => {
 
 
     it("should list unset props as those that are only defined in root", () => {
-        const result = getComponentInfo(
-            screens(), 
-            "common/PasswordBox");
+        const {components, screens} = componentsAndScreens();
+        const result = getScreenInfo(
+            components, 
+            getScreen(screens, "common/PasswordBox"));
 
         expect(result.unsetProps).toEqual([
             "placeholder", "label"]);

@@ -2,7 +2,7 @@
 
 import ComponentsHierarchy from "./ComponentsHierarchy.svelte";
 import PagesList from "./PagesList.svelte"
-import EditComponent from "./EditComponent.svelte";
+import EditComponentProps from "./EditComponentProps.svelte";
 import { store } from "../builderStore";
 import getIcon from "../common/icon";
 import { isComponent } from "./pagesParsing/searchComponents";
@@ -12,6 +12,7 @@ import NewComponent from "./NewComponent.svelte";
 import CurrentItemPreview from "./CurrentItemPreview.svelte";
 import SettingsView from "./SettingsView.svelte";
 import PageView from "./PageView.svelte";
+import ComponentsList from "./ComponentsList.svelte";
 
 let newComponentPicker;  
 const newComponent = () => {
@@ -58,7 +59,7 @@ const settings = () => {
 
     </div>
 
-    <div>
+    <div class="preview-pane">
         {#if $store.currentFrontEndType === "screen"}
         <CurrentItemPreview />
         {:else if $store.currentFrontEndType === "page"}
@@ -67,8 +68,14 @@ const settings = () => {
     </div>
 
     {#if $store.currentFrontEndType === "screen"}
-    <div class="properties-pane">
-        <EditComponent />
+    <div class="components-pane">
+        <ComponentsList />
+    </div>
+    {/if}
+
+    {#if $store.currentFrontEndType === "screen"}
+    <div class="props-pane">
+        <EditComponentProps  />
     </div>
     {/if}
 
@@ -84,19 +91,32 @@ const settings = () => {
 .root {
     display: grid;
     grid-template-columns: [uiNav] 250px [preview] auto [properties] 300px;
+    grid-template-rows: [top] auto [bottom] 400px;
     height: 100%;
     width: 100%;
     overflow-y: auto;
 }
 
 .ui-nav {
-    grid-column-start: uiNav;
+    grid-column: uiNav;
+    grid-row: top / span 2;
     background-color: var(--secondary5);
     height: 100%;
 }
 
-.properties-pane {
-    grid-column-start: properties;
+.props-pane {
+    grid-column: uiNav;
+    grid-row: top / span 2;
+}
+
+.preview-pane {
+    grid-column: preview;
+    grid-row: top / span 1;
+}
+
+.components-pane {
+    grid-column: properties;
+    grid-row: top / span 2;
     background-color: var(--secondary5);
     height: 100%;
     overflow-y: hidden;

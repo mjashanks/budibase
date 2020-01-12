@@ -7,30 +7,6 @@ import { assign } from "lodash";
 import { pipe } from "../../common/core";
 import { isRootComponent } from "./searchComponents";
 
-export const createPropDefinitionForDerived = (components, componentName) => {
-    
-
-    const {propDef, derivedProps} = getComponentInfo(components, componentName);
-
-    const hasDerivedProp = k => pipe(derivedProps, [
-        keys,
-        uniq,
-        some(key => key === k)
-    ]);
-
-    return pipe(propDef, [
-        keys,
-        filter(k => !hasDerivedProp(k)),
-        reduce((obj, k) => {
-            obj[k] = propDef[k];
-            return obj;
-        }, {}),
-        expandPropsDefinition
-    ])
-}
-
-export const traverseForProps = getComponentInfo;
-
 export const getInstanceProps = (componentInfo, props) => {
     const finalProps = cloneDeep(componentInfo.fullProps);
 
@@ -41,10 +17,10 @@ export const getInstanceProps = (componentInfo, props) => {
     return finalProps;
 }
 
-export const getNewComponentInfo = (components, inherits) => {
+export const getNewComponentInfo = (components, inherits, name) => {
     const parentcomponent = find(c => c.name === inherits)(components);
     const component = {
-        name:"", 
+        name: name || "", 
         description:"", 
         inherits, 
         props:{}, 
@@ -52,48 +28,52 @@ export const getNewComponentInfo = (components, inherits) => {
     };
     return getComponentInfo(
         components,
-        inherits,
-        [component],
-        {});
+        component);
 }
 
 
-export const getComponentInfo = (components, comp, stack=[], subComponentProps=null) => {
-    const component = isString(comp) 
-                      ? find(c => c.name === comp)(components)
-                      : comp;
-    const cname = isString(comp) ? comp : comp.name;
-    if(isRootComponent(component)) {
-        subComponentProps = subComponentProps||{};
-        const p = createProps(cname, component.props, subComponentProps);
-        const rootProps = createProps(cname, component.props);
-        const targetComponent = stack.length > 0
-                                ? last(stack)
-                                : component;
-
-        const unsetProps = pipe(p.props, [
-            keys,
-            filter(k => !includes(k)(keys(subComponentProps)) && k !== "_component")
-        ]);
-
-        const fullProps = cloneDeep(p.props);
-        fullProps._component = targetComponent.name;
-
-        return ({
-            propsDefinition:expandPropsDefinition(component.props), 
-            rootDefaultProps: rootProps.props,
-            unsetProps,
-            fullProps: fullProps,
-            errors: p.errors,
-            component: targetComponent,
-            rootComponent: component
-        });
-    }
+export const getScreenInfo = (components, screen) => {
     return getComponentInfo(
         components, 
-        component.inherits, 
-        [component, ...stack],
-        {...component.props, ...subComponentProps});
+        screen);
+}
+
+export const getComponentInfo = (components, comp) => {
+    const targetComponent = isString(comp) 
+                            ? find(c => c.name === comp)(components)
+                            : comp;
+    let component;
+    let subComponent;
+    if(isRootComponent(targetComponent)) {
+        component = targetComponent;
+    } else {
+        subComponent = targetComponent;
+        component = find(c => c.name === subComponent.inherits)(components);
+    }
+
+    const cname = isString(comp) ? comp : comp.name;
+
+    const subComponentProps = subComponent ? subComponent.props : {};
+    const p = createProps(cname, component.props, subComponentProps);
+    const rootProps = createProps(cname, component.props);
+
+    const unsetProps = pipe(p.props, [
+        keys,
+        filter(k => !includes(k)(keys(subComponentProps)) && k !== "_component")
+    ]);
+
+    const fullProps = cloneDeep(p.props);
+    fullProps._component = targetComponent.name;
+
+    return ({
+        propsDefinition:expandPropsDefinition(component.props), 
+        rootDefaultProps: rootProps.props,
+        unsetProps,
+        fullProps: fullProps,
+        errors: p.errors,
+        component: targetComponent,
+        rootComponent: component
+    });
 }
 
 export const createProps = (componentName, propsDefinition, derivedFromProps) => {

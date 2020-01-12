@@ -8,7 +8,7 @@ import Textbox from "../common/Textbox.svelte";
 import UIkit from "uikit";
 import { pipe } from "../common/core";
 import {
-    getComponentInfo
+    getScreenInfo
 } from "./pagesParsing/createProps";
 import Button from "../common/Button.svelte";
 import ButtonGroup from "../common/ButtonGroup.svelte";
@@ -29,7 +29,6 @@ let name = "";
 let description = "";
 let tagsString = "";
 let nameInvalid = "";
-let componentDetailsExpanded = false;
 let componentInfo;
 let modalElement
 let propsValidationErrors = [];
@@ -48,7 +47,6 @@ store.subscribe(s => {
     description = component.description;
     tagsString = join(", ")(component.tags);
     componentInfo = s.currentComponentInfo;
-    componentDetailsExpanded = s.currentComponentIsNew;
     components = s.components;
 });
 
@@ -93,7 +91,7 @@ const updateComponent = doChange => {
     const newComponent = cloneDeep(component);
     doChange(newComponent);
     component = newComponent;
-    componentInfo = getComponentInfo(components, newComponent);
+    componentInfo = getScreenInfo(components, newComponent);
 }
 
 const onPropsChanged = newProps => {
@@ -141,30 +139,6 @@ const showDialog = () => {
     </div>
 
     <div class="component-props-container">
-
-        <div class="section-header padding" on:click={() => componentDetailsExpanded = !componentDetailsExpanded}>
-            <span style="margin-right: 7px">Component Details</span>
-            <IconButton icon={componentDetailsExpanded ? "chevron-down" : "chevron-right"}/>
-        </div>
-
-        {#if componentDetailsExpanded}
-        <div class="padding">
-            <div class="info-text">
-                <Textbox label="Name" 
-                        infoText="use forward slash to store in subfolders"
-                        text={name}
-                        on:change={ev => name = ev.target.value}
-                        hasError={!!nameInvalid}/>
-                <Textbox label="Description"
-                         on:change={ev => description = ev.target.value}
-                         text={description}/>
-                <Textbox label="Tags" 
-                         infoText="comma separated"
-                         on:change={ev => tagsString = ev.target.value}
-                         text={tagsString}/>
-            </div>    
-        </div>
-        {/if}
 
         <div class="section-header padding">
             <span>Properties</span>

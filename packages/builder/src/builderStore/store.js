@@ -15,9 +15,9 @@ import { defaultPagesObject } from "../userInterface/pagesParsing/defaultPagesOb
 import { buildPropsHierarchy } from "../userInterface/pagesParsing/buildPropsHierarchy"
 import api from "./api";
 import { isRootComponent, getExactComponent } from "../userInterface/pagesParsing/searchComponents";
-import { rename } from "../userInterface/pagesParsing/renameComponent";
+import { rename } from "../userInterface/pagesParsing/renameScreen";
 import { 
-    getComponentInfo, getNewComponentInfo 
+    getNewComponentInfo, getScreenInfo
 } from "../userInterface/pagesParsing/createProps";
 import { 
     loadLibs, loadLibUrls, loadGeneratorLibs
@@ -39,9 +39,9 @@ export const getStore = () => {
         components:[],
         currentFrontEndItem:null,
         currentComponentInfo:null,
-        currentComponentIsNew:false,
         currentFrontEndType:"none",
         currentPageName: "",
+        currentComponentProps:null,
         currentNodeIsNew: false,
         errors: [],
         activeNav: "database",
@@ -429,43 +429,38 @@ const createShadowHierarchy = hierarchy =>
     constructHierarchy(JSON.parse(JSON.stringify(hierarchy)));
 
 const saveScreen = store => (screen) => {
-
     store.update(s => {
-
-        const components = pipe(s.components, [
-            filter(c => c.name !== screen.name),
-            concat([screen])
-        ]);
-
-        const screens = pipe(s.screens, [
-            filter(c => c.name !== screen.name),
-            concat([screen])
-        ]);
-
-        s.components = components;
-        s.screens = screens;
-        s.currentFrontEndItem = screen;
-        s.currentComponentInfo = getComponentInfo(
-            s.components, screen.name);
-        s.currentComponentIsNew = false;
-        
-        api.post(`/_builder/api/${s.appname}/screen`, screen)
-            .then(() => savePackage(store, s));
-
-        return s;
+        return _saveScreen(s, screen);
     })
 };
 
-const createScreen = store => componentName => {
+const _saveScreen = (s, screen) => {
+    const screens = pipe(s.screens, [
+        filter(c => c.name !== screen.name),
+        concat([screen])
+    ]);
+
+    s.screens = screens;
+    s.currentFrontEndItem = screen;
+    s.currentComponentInfo = getScreenInfo(
+        s.components, screen);
+
+    api.post(`/_builder/api/${s.appname}/screen`, screen)
+        .then(() => savePackage(store, s));
+
+    return s; 
+}
+
+const createScreen = store => (screenName, layoutComponentName) => {
     store.update(s => {
         const newComponentInfo = getNewComponentInfo(
-            s.components, componentName);
+            s.components, layoutComponentName, screenName);
 
         s.currentFrontEndItem = newComponentInfo.component;
         s.currentComponentInfo = newComponentInfo;
         s.currentFrontEndType = "screen";
-        s.currentComponentIsNew = true;
-        return s;
+
+        return _saveScreen(s, newComponentInfo.component);
     });
 };
 
@@ -516,23 +511,24 @@ const renameScreen = store => (oldname, newname) => {
     store.update(s => {
 
         const {
-            components, pages, error, changedComponents
-        } = rename(s.pages, s.components, oldname, newname);
+            screens, pages, error, changedScreens
+        } = rename(s.pages, s.screens, oldname, newname);
 
         if(error) {
             // should really do something with this
             return s;
         }
 
-        s.components = components;
+        s.screens = screens;
         s.pages = pages;
         if(s.currentFrontEndItem.name === oldname)
             s.currentFrontEndItem.name = newname;
 
         const saveAllChanged = async () => {
-            for(let cname of changedComponents) {
-                const changedComponent = getExactComponent(components, cname);
-                await api.post(`/_builder/api/${s.appname}/screen`, changedComponent);
+            for(let screenName of changedScreens) {
+                const changedScreen
+                 = getExactComponent(screens, screenName);
+                await api.post(`/_builder/api/${s.appname}/screen`, changedScreen);
             }
         }
 
@@ -656,8 +652,14 @@ const savePackage = (store, s) => {
         triggers:s.triggers,
         actions: keyBy("name")(s.actions),
         props: {
-            main: buildPropsHierarchy(s.components, s.pages.main.appBody),
-            unauthenticated:  buildPropsHierarchy(s.components, s.pages.unauthenticated.appBody)
+            main: buildPropsHierarchy(
+                    s.components, 
+                    s.screens, 
+                    s.pages.main.appBody),
+            unauthenticated:  buildPropsHierarchy(
+                                s.components, 
+                                s.screens, 
+                                s.pages.unauthenticated.appBody)
         }
     };
 
@@ -670,13 +672,12 @@ const savePackage = (store, s) => {
     return api.post(`/_builder/api/${s.appname}/appPackage`, data);
 }
 
-const setCurrentScreen = store => componentName => {
+const setCurrentScreen = store => screenName => {
     store.update(s => {
-        const component = getExactComponent(s.components, componentName);
-        s.currentFrontEndItem = component;
+        const screen = getExactComponent(s.screens, screenName);
+        s.currentFrontEndItem = screen;
         s.currentFrontEndType = "screen";
-        s.currentComponentIsNew = false;
-        s.currentComponentInfo = getComponentInfo(s.components, component.name);
+        s.currentComponentInfo = getScreenInfo(s.components, screen);
         return s;
     })
 }

@@ -2,7 +2,9 @@ import {
     getComponentInfo, createProps, getInstanceProps 
 } from "./createProps";
 
-export const buildPropsHierarchy = (components, baseComponent) => {
+export const buildPropsHierarchy = (components, screens, baseComponent) => {
+
+    const allComponents = [...components, ...screens];
 
     const buildProps = (componentName, propsDefinition, derivedFromProps) => {
 
@@ -26,7 +28,7 @@ export const buildPropsHierarchy = (components, baseComponent) => {
 
                 for(let child of childrenProps) {
                     const propComponentInfo = getComponentInfo(
-                        components, child._component);
+                        allComponents, child._component);
     
                     const subComponentInstanceProps = getInstanceProps(
                         propComponentInfo,
@@ -63,7 +65,7 @@ export const buildPropsHierarchy = (components, baseComponent) => {
 
     if(!baseComponent) return {};
 
-    const baseComponentInfo  = getComponentInfo(components, baseComponent);
+    const baseComponentInfo  = getComponentInfo(allComponents, baseComponent);
 
     return buildProps(
         baseComponentInfo.rootComponent.name,

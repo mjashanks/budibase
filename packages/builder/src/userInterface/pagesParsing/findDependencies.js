@@ -23,11 +23,13 @@ export const libraryDependencies = (components, lib) => {
     );
 }
 
-export const componentDependencies = (pages, components, dependsOn) => {
+export const componentDependencies = (pages, screens, components, dependsOn) => {
 
-    
+    const allComponents = [
+        ...cloneDeep(components), 
+        ...cloneDeep(screens)];
+        
     pages = cloneDeep(pages);
-    components = cloneDeep(components);
     const dependantComponents = [];
     const dependantPages = [];
 
@@ -53,7 +55,7 @@ export const componentDependencies = (pages, components, dependsOn) => {
     }
 
 
-    for(let component of components) {
+    for(let component of allComponents) {
         
         if(isRootComponent(component)) {
             continue;

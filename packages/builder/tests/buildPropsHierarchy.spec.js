@@ -1,4 +1,4 @@
-import { screens } from "./testData";
+import { componentsAndScreens } from "./testData";
 import {
     find
 } from "lodash/fp";
@@ -9,10 +9,10 @@ describe("buildPropsHierarchy", () => {
 
     it("should build a complex component with arrays and components", () => {
 
-        const components = screens();
+        const {components, screens} = componentsAndScreens();
 
         const allprops = buildPropsHierarchy(
-            components, "ButtonGroup");
+            components, screens, "ButtonGroup");
 
         expect(allprops._component).toEqual("budibase-components/div");
 

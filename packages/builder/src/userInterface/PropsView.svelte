@@ -6,10 +6,7 @@ import {
     filter, difference
 } from "lodash/fp";
 import { pipe } from "../common/core";
-import { 
-    getComponentInfo, getInstanceProps
-} from "./pagesParsing/createProps";
-import { getExactComponent } from "./pagesParsing/searchComponents";
+import { getInstanceProps } from "./pagesParsing/createProps";
 import Checkbox from "../common/Checkbox.svelte";
 import Textbox from "../common/Textbox.svelte";
 import Dropdown from "../common/Dropdown.svelte";
