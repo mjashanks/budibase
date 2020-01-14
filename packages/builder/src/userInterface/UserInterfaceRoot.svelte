@@ -90,35 +90,35 @@ const settings = () => {
 
 .root {
     display: grid;
-    grid-template-columns: [uiNav] 250px [preview] auto [properties] 300px;
-    grid-template-rows: [top] auto [bottom] 400px;
+    grid-template-columns: 250px 1fr 300px;
+    grid-template-rows: 1fr 300px;
     height: 100%;
     width: 100%;
-    overflow-y: auto;
 }
 
 .ui-nav {
-    grid-column: uiNav;
-    grid-row: top / span 2;
+    grid-column: 1;
+    grid-row: 1 / span 2;
     background-color: var(--secondary5);
     height: 100%;
 }
 
 .props-pane {
-    grid-column: uiNav;
-    grid-row: top / span 2;
+    grid-column: 2;
+    grid-row: 2;
+    min-width: 0px;
 }
 
 .preview-pane {
-    grid-column: preview;
-    grid-row: top / span 1;
+    grid-column: 2;
+    grid-row: 1;
 }
 
 .components-pane {
-    grid-column: properties;
-    grid-row: top / span 2;
+    grid-column: 3;
+    grid-row: 1 / span 2;
     background-color: var(--secondary5);
-    height: 100%;
+    min-height: 0px;
     overflow-y: hidden;
 }
 

@@ -140,10 +140,6 @@ const showDialog = () => {
 
     <div class="component-props-container">
 
-        <div class="section-header padding">
-            <span>Properties</span>
-        </div>
-
        
         <PropsView onValidate={onPropsValidate}
                 {componentInfo}
@@ -190,20 +186,13 @@ const showDialog = () => {
     height: 100%;
     display: flex;
     flex-direction: column;
-}
-
-.padding {
-    padding: 1rem 1rem 0rem 1rem;
-}
-
-.info-text {
-    color: var(--secondary100);
-    font-size: .8rem !important;
-    font-weight: bold;
+    border-style: solid;
+    border-width: 1px 0 0 0;
+    border-color: var(--slate);
 }
 
 .title {
-    padding: 2rem 1rem 1rem 1rem;
+    padding: 1rem;
     display: grid;
     grid-template-columns: [name] 1fr [actions] auto;
     color: var(--secondary100);
@@ -218,15 +207,6 @@ const showDialog = () => {
 
 .title > div:nth-child(2) {
     grid-column-start: actions;
-}
-
-.section-header {
-    display: grid;
-    grid-template-columns: [name] 1fr [actions] auto;
-    color: var(--secondary50);
-    font-size: .9rem;
-    font-weight: bold;
-    vertical-align: middle;
 }
 
 .component-props-container {

@@ -52,38 +52,46 @@ store.subscribe(s => {
 
 </script>
 
-{#each componentLibraries as lib}
-<div class="library-header">
-    {lib.libName}
-</div>
-
-<div class="library-container">
-
- 
-    <div class="inner-header">
-        Components
+<div class="root">
+    {#each componentLibraries as lib}
+    <div class="library-header">
+        {lib.libName}
     </div>
 
-    {#each lib.components as component}
+    <div class="library-container">
 
-    <div class="component"
-         on:click={() => onComponentChosen(component)}>
-        <div class="name">
-            {splitName(component.name).componentName}
+    
+        <div class="inner-header">
+            Components
         </div>
-        <div class="description">
-            {component.description}
+
+        {#each lib.components as component}
+
+        <div class="component"
+            on:click={() => onComponentChosen(component)}>
+            <div class="name">
+                {splitName(component.name).componentName}
+            </div>
+            <div class="description">
+                {component.description}
+            </div>
         </div>
+
+        {/each}
+
     </div>
 
     {/each}
 
 </div>
 
-{/each}
-
 
 <style>
+
+.root {
+    display: flex;
+    flex-direction: column;
+}
 
 .library-header {
     font-size: 1.1em;
@@ -92,10 +100,13 @@ store.subscribe(s => {
     border-style: solid;
     background-color: var(--primary10);
     padding: 5px 0;
+    flex: 0 0 auto;
 }
 
 .library-container {
     padding: 0 0 10px 10px;
+    flex: 1 1 auto;
+    min-height: 0px;
 }
 
 .inner-header {

@@ -122,7 +122,7 @@ const initialise = (store, initial) => async () => {
     initial.accessLevels = pkg.accessLevels;
     initial.screens = values(pkg.screens);
     initial.generators = generatorsArray(pkg.components.generators);
-    initial.components = pkg.components.components;
+    initial.components = values(pkg.components.components);
     initial.actions = values(pkg.appDefinition.actions);
     initial.triggers = pkg.appDefinition.triggers;
 
@@ -430,11 +430,11 @@ const createShadowHierarchy = hierarchy =>
 
 const saveScreen = store => (screen) => {
     store.update(s => {
-        return _saveScreen(s, screen);
+        return _saveScreen(store, s, screen);
     })
 };
 
-const _saveScreen = (s, screen) => {
+const _saveScreen = (store, s, screen) => {
     const screens = pipe(s.screens, [
         filter(c => c.name !== screen.name),
         concat([screen])
@@ -460,7 +460,7 @@ const createScreen = store => (screenName, layoutComponentName) => {
         s.currentComponentInfo = newComponentInfo;
         s.currentFrontEndType = "screen";
 
-        return _saveScreen(s, newComponentInfo.component);
+        return _saveScreen(store, s, newComponentInfo.component);
     });
 };
 

@@ -80,15 +80,19 @@ const fieldHasError = (propName) =>
 
 <div class="root">
 
-    <form class="uk-form-stacked">
+    <form class="uk-form-stacked form-root">
         {#each propsDefinitions as propDef, index}
         
-        <PropControl {setProp}
-                     {fieldHasError}
-                     {propDef}
-                     {props}
-                     {index}
-                     disabled={false} />
+        <div class="prop-container">
+
+            <PropControl {setProp}
+                        {fieldHasError}
+                        {propDef}
+                        {props}
+                        {index}
+                        disabled={false} />
+
+        </div>
             
         {/each}
 
@@ -104,6 +108,17 @@ const fieldHasError = (propName) =>
 
 .root {
     font-size:10pt;
+    width: 100%;
+}
+
+.form-root {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.prop-container {
+    flex: 1 1 auto;
+    min-width: 250px;
 }
 
 </style>
