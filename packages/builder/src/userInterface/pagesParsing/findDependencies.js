@@ -13,7 +13,8 @@ export const libraryDependencies = (components, lib) => {
             return (libName === lib);
         }
         return componentDependsOnLibrary(
-            find(c => c.name === comp.inherits)(components)
+            find(c => c.name === comp.props._component)(
+                components)
         );
     }
 
@@ -65,7 +66,7 @@ export const componentDependencies = (pages, screens, components, dependsOn) => 
             continue;
         }
 
-        if(component.inherits === dependsOn.name) {
+        if(component.props._component === dependsOn.name) {
             dependantComponents.push(component);
             continue;
         }

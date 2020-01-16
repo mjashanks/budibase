@@ -6,16 +6,17 @@ export const buildPropsHierarchy = (components, screens, baseComponent) => {
 
     const allComponents = [...components, ...screens];
 
-    const buildProps = (componentName, propsDefinition, derivedFromProps) => {
-
-        const {props} = createProps(componentName, propsDefinition, derivedFromProps);
-        props._component = componentName;
+    const buildProps = (componentDefinition, derivedFromProps) => {
+        
+        const {props} = createProps(componentDefinition, derivedFromProps);
+        const propsDefinition = componentDefinition.props;
+        props._component = componentDefinition.name;
         for(let propName in props) {
             if(propName === "_component") continue;
 
             const propDef = propsDefinition[propName];
             if(!propDef) continue;
-            if(propDef.type === "children") {
+            if(propName === "_children") {
 
                 const childrenProps = props[propName];
                 
@@ -41,22 +42,7 @@ export const buildPropsHierarchy = (components, screens, baseComponent) => {
                             propComponentInfo.propsDefinition,
                             subComponentInstanceProps));
                 }
-
-            } else if(propDef.type === "array") {
-                const propsArray = props[propName];
-                const newPropsArray = [];
-                let index = 0;
-                for(let element of propsArray) {
-                    newPropsArray.push(
-                        buildProps(
-                            `${propName}#array_element#`,
-                            propDef.elementDefinition,
-                            element));
-                    index++;
-                }
-
-                props[propName] = newPropsArray;
-            }
+            } 
         }
 
         return props;
@@ -68,8 +54,7 @@ export const buildPropsHierarchy = (components, screens, baseComponent) => {
     const baseComponentInfo  = getComponentInfo(allComponents, baseComponent);
 
     return buildProps(
-        baseComponentInfo.rootComponent.name,
-        baseComponentInfo.propsDefinition,
+        baseComponentInfo.rootComponent,
         baseComponentInfo.fullProps);
 
 }

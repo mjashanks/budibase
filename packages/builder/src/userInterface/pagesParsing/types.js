@@ -20,8 +20,7 @@ const defaultDef = typeName => () => ({
     type: typeName,
     required:false,
     default:types[typeName].default(),
-    options: typeName === "options" ? [] : undefined,
-    elementDefinition: typeName === "array" ? {} : undefined
+    options: typeName === "options" ? [] : undefined
 });
 
 const propType = (defaultValue, isOfType, defaultDefinition) => ({
@@ -42,18 +41,22 @@ const expandSingleProp = propDef => {
         }
     }
 
-    if(p.type === "array") {
-        p.elementDefinition = expandPropsDefinition(p.elementDefinition);
-    }
     return p;
 }
 
-export const expandPropsDefinition = propsDefinition => {
+export const expandComponentDefinition = componentDefinition => {
     const expandedProps = {};
-    for(let p in propsDefinition) {
+    const expandedComponent = {...componentDefinition};
+
+    for(let p in componentDefinition.props) {
         expandedProps[p] = expandSingleProp(propsDefinition[p]);
     }
-    return expandedProps;
+
+    if(expandedComponent.children !== false) {
+        expandedComponent.children = true;
+    }
+
+    return expandedComponent;
 }
 
 const isComponent = isObjectLike;
@@ -75,9 +78,7 @@ export const types = {
     string: propType(() => "", isString, defaultDef("string")),
     bool: propType(() => false, isBoolean, defaultDef("bool")),
     number: propType(() => 0, isNumber, defaultDef("number")),
-    array: propType(() => [], isArray, defaultDef("array")),
     options: propType(() => "", isString, defaultDef("options")),
-    children: propType(() => ([]), isArray, defaultDef("children")),
     asset: propType(() => "", isString, defaultDef("asset")),
     event: propType(() => [], isEventList, defaultDef("event")),
     state: propType(() => emptyState(), isBound, defaultDef("state"))

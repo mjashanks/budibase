@@ -68,7 +68,7 @@ let setProp = (name, value) => {
 }
                   
 const validate = (finalProps) => {
-    errors = validateProps(componentInfo.propsDefinition, finalProps, [], false);
+    errors = validateProps(componentInfo.rootComponent, finalProps, [], false);
     onValidate(errors);
     return errors.length === 0;
 }

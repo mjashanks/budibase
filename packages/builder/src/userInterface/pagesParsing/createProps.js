@@ -2,7 +2,7 @@ import {
     isString, isUndefined, find, keys, uniq,
     some, filter, reduce, cloneDeep, includes,last
 } from "lodash/fp";
-import { types, expandPropsDefinition } from "./types";
+import { types, expandComponentDefinition } from "./types";
 import { assign } from "lodash";
 import { pipe } from "../../common/core";
 import { isRootComponent } from "./searchComponents";
@@ -18,14 +18,13 @@ export const getInstanceProps = (componentInfo, props) => {
     return finalProps;
 }
 
-export const getNewComponentInfo = (components, inherits, name) => {
-    const parentcomponent = find(c => c.name === inherits)(components);
+export const getNewComponentInfo = (components, rootComponent, name) => {
     const component = {
         name: name || "", 
-        description:"", 
-        inherits, 
-        props:{}, 
-        tags:parentcomponent.tags
+        description:"",  
+        props:{
+            _component: rootComponent
+        }
     };
     return getComponentInfo(
         components,
@@ -49,14 +48,13 @@ export const getComponentInfo = (components, comp) => {
         component = targetComponent;
     } else {
         subComponent = targetComponent;
-        component = find(c => c.name === subComponent.inherits)(components);
+        component = find(c => c.name === subComponent.props._component)(
+                        components);
     }
 
-    const cname = isString(comp) ? comp : comp.name;
-
     const subComponentProps = subComponent ? subComponent.props : {};
-    const p = createProps(cname, component.props, subComponentProps);
-    const rootProps = createProps(cname, component.props);
+    const p = createProps(component, subComponentProps);
+    const rootProps = createProps(component);
 
     const unsetProps = pipe(p.props, [
         keys,
@@ -67,7 +65,7 @@ export const getComponentInfo = (components, comp) => {
     fullProps._component = targetComponent.name;
 
     return ({
-        propsDefinition:expandPropsDefinition(component.props), 
+        propsDefinition:expandComponentDefinition(component), 
         rootDefaultProps: rootProps.props,
         unsetProps,
         fullProps: fullProps,
@@ -77,22 +75,23 @@ export const getComponentInfo = (components, comp) => {
     });
 }
 
-export const createProps = (componentName, propsDefinition, derivedFromProps) => {
+export const createProps = (componentDefinition, derivedFromProps) => {
 
     const error = (propName, error) =>
         errors.push({propName, error});
 
     const props = {
-        _component: componentName
+        _component: componentDefinition.name
     };
 
     const errors = [];
 
-    if(!componentName)
+    if(!componentDefinition.name)
         error("_component", "Component name not supplied");
 
-    for(let propDef in propsDefinition) {
-        const parsedPropDef = parsePropDef(propsDefinition[propDef]);
+    const propsDef = componentDefinition.props;
+    for(let propDef in propsDef) {
+        const parsedPropDef = parsePropDef(propsDef[propDef]);
         if(parsedPropDef.error)
             error(propDef, parsedPropDef.error); 
         else 
@@ -103,15 +102,16 @@ export const createProps = (componentName, propsDefinition, derivedFromProps) =>
         assign(props, derivedFromProps);
     }
 
+    if(componentDefinition.children !== false 
+      && isUndefined(props._children)) {
+        props._children = [];
+    }
+
     return ({
         props, errors
     });
 }
 
-export const createArrayElementProps = (arrayPropName, elementDefinition) => 
-    createProps(
-        `#${arrayPropName}#array_element`,
-        elementDefinition);
 
 const parsePropDef = propDef => {
     const error = message => ({error:message, propDef});

@@ -47,8 +47,8 @@ export const rename = (pages, screens, oldname, newname) => {
             hasEdited = true;
         }
 
-        if(screen.inherits === oldname) {
-            screen.inherits = newname;
+        if(screen.props._component === oldname) {
+            screen.props._component = newname;
             hasEdited = true;
         }
         

@@ -4,6 +4,7 @@ export const componentsAndScreens = () => ({
         {
             name: "budibase-components/TextBox",
             tags: ["Text", "input"],
+            children: false,
             props: {
                 size: {type:"options", options:["small", "medium", "large"]},
                 isPassword: "bool",
@@ -14,10 +15,10 @@ export const componentsAndScreens = () => ({
         {
             name: "budibase-components/Button",
             tags: ["input"],
+            children: true,
             props: {
                 size: {type:"options", options:["small", "medium", "large"]},
                 css: "string",
-                content: "children",
                 contentText: "string"
             } 
         },
@@ -26,13 +27,6 @@ export const componentsAndScreens = () => ({
             tags: ["input"],
             props: {
                 width: "number",
-                header : "children",
-                children: {
-                    type:"array",
-                    elementDefinition: {
-                        control: "children"
-                    }
-                } 
             }
         },
         {
@@ -45,34 +39,35 @@ export const componentsAndScreens = () => ({
     ],
     screens: [
         {
-            inherits:"budibase-components/TextBox",
             name: "common/SmallTextbox",
             props: {
+                _component: "budibase-components/TextBox",
                 size: "small"
             }
         },
         
         {
-            inherits:"budibase-components/TextBox",
             name: "common/PasswordBox",
             tags: ["mask"],
             props: {
+                _component: "budibase-components/TextBox",
                 isPassword: true,
                 size: "small"
             }
         },
+
         {
-            inherits:"budibase-components/Button",
             name:"PrimaryButton",
             props: {
+                _component:"budibase-components/Button",
                 css:"btn-primary"
             }
         },
+
         {
-            inherits:"budibase-components/div",
             name:"ButtonGroup",
             props: {
-
+                _component:"budibase-components/div",
                 width: 100,
                 header: [{
                     _component: "PrimaryButton"
@@ -98,11 +93,12 @@ export const componentsAndScreens = () => ({
                 ]
             }
         },
+        
         {
-            inherits:"budibase-components/div",
             name:"Field",
             props: {
-                children:[
+                _component:"budibase-components/div",
+                _children:[
                     {
                         _component: "common/SmallTextbox"
                     }

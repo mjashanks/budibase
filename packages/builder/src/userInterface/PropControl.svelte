@@ -3,7 +3,6 @@
 import Checkbox from "../common/Checkbox.svelte";
 import Textbox from "../common/Textbox.svelte";
 import Dropdown from "../common/Dropdown.svelte";
-import PropArraySelector from "./PropArraySelector.svelte";
 import EventListSelector from "./EventListSelector.svelte";
 import StateBindingControl from "./StateBindingControl.svelte";
 
@@ -26,21 +25,14 @@ const setComponentProp = (props) => {
 
 <div class="root" >
 
-    {#if propDef.type === "array"}
-
-    <div class="prop-label">{propDef.____name}</div>
-    <PropArraySelector parentProps={props}
-                       {propDef}
-                       onValueChanged={setComponentProp} />
-
-    {:else if propDef.type === "event"}
+    {#if propDef.type === "event"}
 
     <div class="prop-label">{propDef.____name}</div>
     <EventListSelector parentProps={props}
                        {propDef}
                        onValueChanged={setComponentProp} />
 
-    {:else if propDef.type !== "children"}
+    {:else }
 
     <div class="prop-label">{propDef.____name}</div>
     <StateBindingControl value={props[propDef.____name]}

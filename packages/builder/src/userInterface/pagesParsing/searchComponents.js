@@ -11,7 +11,8 @@ import {
 
 const normalString = s => (s||"").trim().toLowerCase();
 
-export const isRootComponent = c => isComponent(c) && isUndefined(c.inherits);
+export const isRootComponent = c => 
+    isComponent(c) && isUndefined(c.props._component);
 
 export const isComponent = c => {
     const hasProp = (n) => !isUndefined(c[n]);
@@ -32,7 +33,7 @@ export const searchAllComponents = (components, phrase) => {
         
         const parent = getExactComponent(
             components,
-            c.inherits);
+            c.props._component);
 
         return componentMatches(parent);
     }
@@ -59,7 +60,7 @@ export const getAncestorProps = (components, name, found=[]) => {
 
     return getAncestorProps(
         components, 
-        thisComponent.inherits,
+        thisComponent.props._component,
         [{...thisComponent.props}, 
         ...found]);
 

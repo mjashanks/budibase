@@ -6,5 +6,5 @@ export const getRootComponent = (componentName, components) => {
 
     if(isRootComponent(component)) return component;
 
-    return getRootComponent(component.inherits, components);
+    return getRootComponent(component.props._component, components);
 }
