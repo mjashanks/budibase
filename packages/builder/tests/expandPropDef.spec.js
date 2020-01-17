@@ -39,12 +39,12 @@ describe("expandPropDefintion", () => {
     it("should not change children when specified", () => {
         const c = componentDef();
         c.children = false;
-        const result = expandComponentDefinition(componentDef());
+        const result = expandComponentDefinition(c);
         expect(result.children).toBe(false);
 
         c.children = true;
-        const result = expandComponentDefinition(componentDef());
-        expect(result.children).toBe(true);
+        const result2 = expandComponentDefinition(c);
+        expect(result2.children).toBe(true);
     });
 
 })

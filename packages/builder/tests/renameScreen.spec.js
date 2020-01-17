@@ -21,6 +21,7 @@ describe("rename component", () => {
 
     });
 
+    /* this may be usefull if we have user defined components
     it("should change name of nested _components", () => {
         const {screens} = componentsAndScreens();
         const result = rename({}, screens, "PrimaryButton", "MainButton");
@@ -29,15 +30,7 @@ describe("rename component", () => {
         expect(buttonGroup.props.header[0]._component).toBe("MainButton");
 
     });
-
-    it("should change name of nested _components inside arrays", () => {
-        const {screens} = componentsAndScreens();
-        const result = rename({}, screens, "PrimaryButton", "MainButton");
-
-        const buttonGroup = getExactComponent(result.screens, "ButtonGroup");
-        expect(buttonGroup.props.children[0].control[0]._component).toBe("MainButton");
-
-    });
+    */
 
 
     it("should change name of page appBody", () => {
@@ -53,6 +46,7 @@ describe("rename component", () => {
         
     });
 
+    /* this may be usefull if we have user defined components
     it("should return a list of changed components", () => {
         const {screens} = componentsAndScreens();
         const result = rename({}, screens, "PrimaryButton", "MainButton");
@@ -63,4 +57,5 @@ describe("rename component", () => {
         expect(result2.changedScreens).toEqual(["Field"]);
 
     });
+    */
 })

@@ -29,22 +29,11 @@ describe("component dependencies", () => {
         
         const result = componentDependencies(
             {}, screens, components, 
-            get([...components, ...screens], "PrimaryButton"));
+            get([...components, ...screens], "budibase-components/Button"));
 
         expect(contains(result.dependantComponents, "ButtonGroup")).toBe(true);
 
     });
-
-    it("shouldinclude component that nests inside arrays", () => {
-        const {components, screens} = componentsAndScreens();
-        
-        const result = componentDependencies(
-            {}, screens, components, 
-            get([...components, ...screens], "common/PasswordBox"));
-
-        expect(contains(result.dependantComponents, "ButtonGroup")).toBe(true);
-    });
-
 
     it("should include components n page apbody", () => {
         const {components, screens} = componentsAndScreens();

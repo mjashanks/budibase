@@ -5,7 +5,8 @@ import {
     isArray,
     isObjectLike,
     isPlainObject,
-    every
+    every,
+    isUndefined
 } from "lodash/fp";
 
 import {
@@ -49,8 +50,11 @@ export const expandComponentDefinition = componentDefinition => {
     const expandedComponent = {...componentDefinition};
 
     for(let p in componentDefinition.props) {
-        expandedProps[p] = expandSingleProp(propsDefinition[p]);
+        expandedProps[p] = expandSingleProp(
+            componentDefinition.props[p]);
     }
+
+    expandedComponent.props = expandedProps;
 
     if(expandedComponent.children !== false) {
         expandedComponent.children = true;

@@ -7,7 +7,7 @@ import { buildPropsHierarchy } from "../src/userInterface/pagesParsing/buildProp
 describe("buildPropsHierarchy", () => {
 
 
-    it("should build a complex component with arrays and components", () => {
+    it("should build a complex component children", () => {
 
         const {components, screens} = componentsAndScreens();
 
@@ -17,33 +17,15 @@ describe("buildPropsHierarchy", () => {
         expect(allprops._component).toEqual("budibase-components/div");
 
         const primaryButtonProps = () => ({
-            _component: "budibase-components/Button",
-            css:"btn-primary",
-            content: [],
-            contentText: "",
-            size:""
+            _component: "budibase-components/Button"
         });
-
-        const headerButton = primaryButtonProps();
-        expect(allprops.header).toEqual([headerButton]);
 
         const button1 = primaryButtonProps();
         button1.contentText = "Button 1";
-        expect(allprops.children[0]).toEqual({
-            _component: "children#array_element#",
-            control: [button1]
-        });
-
+        expect(allprops._children[0]).toEqual(button1);
 
         const button2 = primaryButtonProps();
         button2.contentText = "Button 2";
-        expect(allprops.children[1]).toEqual({
-            _component: "children#array_element#",
-            control: [button2]
-        })
-
-
-
+        expect(allprops._children[1]).toEqual(button2)
     });
-
 });

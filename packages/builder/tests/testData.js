@@ -69,26 +69,19 @@ export const componentsAndScreens = () => ({
             props: {
                 _component:"budibase-components/div",
                 width: 100,
-                header: [{
-                    _component: "PrimaryButton"
-                }],
-                children: [
+                _children: [
                     {
-                        control: [{
-                            _component: "PrimaryButton",
-                            contentText: "Button 1"
-                        }]
+                        _component: "budibase-components/Button",
+                        contentText: "Button 1"
                     },
                     {
-                        control: [{
-                            _component: "PrimaryButton",
-                            contentText: "Button 2"
-                        }]
+                        _component: "budibase-components/Button",
+                        contentText: "Button 2"
                     },
                     {
-                        control: [{
-                            _component: "common/PasswordBox",
-                        }]
+                        _component: "budibase-components/TextBox",
+                        isPassword: true,
+                        size: "small"
                     }
                 ]
             }
