@@ -2,7 +2,6 @@
 
 import ComponentsHierarchy from "./ComponentsHierarchy.svelte";
 import PagesList from "./PagesList.svelte"
-import EditComponentProps from "./EditComponentProps.svelte";
 import { store } from "../builderStore";
 import getIcon from "../common/icon";
 import { isComponent } from "./pagesParsing/searchComponents";
@@ -12,7 +11,7 @@ import NewComponent from "./NewComponent.svelte";
 import CurrentItemPreview from "./CurrentItemPreview.svelte";
 import SettingsView from "./SettingsView.svelte";
 import PageView from "./PageView.svelte";
-import ComponentsList from "./ComponentsList.svelte";
+import ComponentsPaneSwitcher from "./ComponentsPaneSwitcher.svelte";
 
 let newComponentPicker;  
 const newComponent = () => {
@@ -69,13 +68,7 @@ const settings = () => {
 
     {#if $store.currentFrontEndType === "screen"}
     <div class="components-pane">
-        <ComponentsList />
-    </div>
-    {/if}
-
-    {#if $store.currentFrontEndType === "screen"}
-    <div class="props-pane">
-        <EditComponentProps  />
+        <ComponentsPaneSwitcher />
     </div>
     {/if}
 
@@ -91,32 +84,22 @@ const settings = () => {
 .root {
     display: grid;
     grid-template-columns: 250px 1fr 300px;
-    grid-template-rows: 1fr 300px;
     height: 100%;
     width: 100%;
 }
 
 .ui-nav {
     grid-column: 1;
-    grid-row: 1 / span 2;
     background-color: var(--secondary5);
     height: 100%;
 }
 
-.props-pane {
-    grid-column: 2;
-    grid-row: 2;
-    min-width: 0px;
-}
-
 .preview-pane {
     grid-column: 2;
-    grid-row: 1;
 }
 
 .components-pane {
     grid-column: 3;
-    grid-row: 1 / span 2;
     background-color: var(--secondary5);
     min-height: 0px;
     overflow-y: hidden;
