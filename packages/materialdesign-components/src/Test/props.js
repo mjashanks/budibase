@@ -117,7 +117,16 @@ export const props = {
   CustomersIndexTable: indexDatatable(templateOptions)[0].props,
   List: {
     _component: "@budibase/materialdesign-components/List",
-    _children: [],
+    _children: [
+      {
+        _component: "@budibase/materialdesign-components/ListItem",
+
+      },
+      {
+        _component: "@budibase/materialdesign-components/ListItem",
+        
+      }
+    ],
     variant: "two-line",
     singleSelection: true,
     items: [

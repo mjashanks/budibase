@@ -7,6 +7,8 @@
 
   const cb = new ClassBuilder("list", ["one-line"]);
 
+
+  $: ulElement && _bb.attachChildren(ulElement)
   let list = null;
   let instance = null;
 
@@ -65,15 +67,6 @@
   $: listClass = cb.build({ props });
 </script>
 
-<ul class={listClass} {role}>
-  {#each items as item, i}
-    <ListItem
-      {item}
-      {useDoubleLine}
-      {inputElement}
-      onClick={() => handleSelectedItem(item)} />
-    {#if item.divider}
-      <li role="separator" class="mdc-list-divider" />
-    {/if}
-  {/each}
+<ul class={listClass} {role} bind:this={ulElement}>
+
 </ul>

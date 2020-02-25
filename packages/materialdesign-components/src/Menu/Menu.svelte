@@ -10,9 +10,13 @@
   export let useAbsolutePosition = false;
   //{x: number, y: number}
   export let absolutePositionCoords = null;
+  export let listElement;
 
   let menu = null;
   let instance = null;
+
+
+  $: listElement && _bb.attachChildren(listElement)
 
   onMount(() => {
     if (!!menu) {
@@ -44,7 +48,21 @@
       bind:this={menu}
       class="mdc-menu mdc-menu-surface"
       style={`width: ${width}`}>
-      <List {items} {singleSelection} />
+      <List  {singleSelection} bind:this={listElement}></List>
     </div>
   </div>
 {/if}
+
+
+/-----------------
+
+<script>
+import Menu from "Menu"
+
+let menuElement
+
+$: menuElement && _bb.attachChildren(menuElement.listElement)
+
+</script>
+
+<Menu bind:this={menuElement}></Menu>
