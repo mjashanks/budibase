@@ -334,6 +334,17 @@ export default {
           children: [],
         },
         {
+          name: "Wide Form",
+          description: "A component that generates a form from your data.",
+          icon: "ri-file-edit-fill",
+          properties: {
+            design: { ...all },
+            settings: [{ label: "Model", key: "model", control: ModelSelect }],
+          },
+          _component: "@budibase/standard-components/dataformwide",
+          children: [],
+        },
+        {
           name: "Chart",
           _component: "@budibase/standard-components/datachart",
           description: "Shiny chart",
