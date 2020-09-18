@@ -43,9 +43,8 @@ exports.serveApp = async function(ctx) {
       appId,
     }
     const anonToken = jwt.sign(anonUser, ctx.config.jwtSecret)
-    ctx.cookies.set("budibase:token", anonToken, {
+    ctx.cookies.set(`budibase:${appId}`, anonToken, {
       path: "/",
-      httpOnly: false,
     })
   }
 

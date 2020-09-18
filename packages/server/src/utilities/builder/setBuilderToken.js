@@ -15,5 +15,5 @@ module.exports = (ctx, appId, instanceId) => {
 
   var expiry = new Date()
   expiry.setDate(expiry.getDate() + 30)
-  ctx.cookies.set("builder:token", token, { expires: expiry, httpOnly: false })
+  ctx.cookies.set("builder:token", token, { expires: expiry })
 }

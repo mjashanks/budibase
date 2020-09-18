@@ -14,8 +14,14 @@ module.exports = async (ctx, next) => {
     return
   }
 
-  const appToken = ctx.cookies.get("budibase:token")
+  const appId = ctx.cookies.get("budibase:appId")
   const builderToken = ctx.cookies.get("builder:token")
+
+  if (appId) {
+    ctx.appId = appId
+  }
+
+  const appToken = appId && ctx.cookies.get(`budibase:${appId}`)
 
   if (builderToken) {
     try {

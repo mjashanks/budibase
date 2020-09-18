@@ -9,7 +9,8 @@ import { parseAppIdFromCookie } from "./render/getAppId"
 export const loadBudibase = async opts => {
   const _window = (opts && opts.window) || window
   // const _localStorage = (opts && opts.localStorage) || localStorage
-  const appId = parseAppIdFromCookie(_window.document.cookie)
+  const appId =
+    getAppIdFromPath(_window) || parseAppIdFromCookie(_window.document.cookie)
   const frontendDefinition = _window["##BUDIBASE_FRONTEND_DEFINITION##"]
 
   const user = {}
@@ -56,4 +57,18 @@ export const loadBudibase = async opts => {
 
 if (window) {
   window.loadBudibase = loadBudibase
+}
+
+const getAppIdFromPath = _window => {
+  // all non blank parts
+  const parts = _window.location.pathname.split("/").filter(p => p)
+  const firstInPath = parts.length > 0 && parts[0]
+  if (!firstInPath) return
+
+  // looks like a GUID - assume its the appId
+  const appId = /^[0-9a-f]{32}$/.test(firstInPath) && firstInPath
+
+  if (!appId) return
+
+  _window.document.cookie = `budibase:appId:${appId}`
 }
