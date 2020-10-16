@@ -42,7 +42,8 @@ export const bbFactory = ({
         eventName &&
         (await runEventActions(
           treeNode.props[eventName],
-          store.getState(treeNode.contextStoreKey)
+          store.getState(treeNode.contextStoreKey),
+          store.getStore(treeNode.contextStoreKey)
         )),
       setBinding: setBindableComponentProp(treeNode),
       api,

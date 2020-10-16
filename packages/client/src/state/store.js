@@ -30,6 +30,10 @@ const create = (data, dataProviderId, childIndex, parentContextStoreId) => {
     parentContextStoreId,
   }
 
+  contextStores[key].store.subscribe(s => {
+    contextStores[key].state = s
+  })
+
   return key
 }
 

@@ -13,16 +13,19 @@ export const eventHandlers = routeTo => {
   }
 
   // when an event is called, this is what gets run
-  const runEventActions = async (actions, state) => {
+  const runEventActions = async (actions, state, store) => {
     if (!actions) return
     // calls event handlers sequentially
     for (let action of actions) {
       const handler = handlers[action[EVENT_TYPE_MEMBER_NAME]]
       const parameters = createParameters(action.parameters, state)
       if (handler) {
-        await handler(parameters, state)
+        // each handler can modify state (e.g. from API responses)
+        state = await handler(parameters, state, store)
       }
     }
+
+    store.set(state)
   }
 
   return runEventActions

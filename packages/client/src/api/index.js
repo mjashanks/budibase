@@ -52,19 +52,28 @@ const apiOpts = {
   delete: del,
 }
 
-const saveRow = async (params, state) =>
-  await post({
+const saveRow = async (params, state) => {
+  const table = state.data._table
+  const savedRecord = await post({
     url: `/api/${params.tableId}/rows`,
     body: makeRowRequestBody(params, state),
   })
+  savedRecord._table = table
+  state.data = savedRecord
+  return state
+}
 
 const updateRow = async (params, state) => {
+  const table = state.data._table
   const row = makeRowRequestBody(params, state)
   row._id = params._id
-  await patch({
+  const savedRecord = await patch({
     url: `/api/${params.tableId}/rows/${params._id}`,
     body: row,
   })
+  savedRecord._table = table
+  state.data = savedRecord
+  return state
 }
 
 const deleteRow = async params =>
